@@ -84,10 +84,13 @@ func (p *JSONParser) ConvertValue(value gjson.Result, targetType string) (interf
                     case "bool" : 
                             return value.Bool(), nil
                     case "timestamp" :  
-                    if value.Type == gjson.String {                                // This check is the timestamp is string : "2025-02-14T10:26:00Z"
-                                      return time.Parse(time.RFC3339, value.String()) 
+                    if value.Type == gjson.String {                         // This check is the timestamp is string : "2025-02-14T10:26:00Z"
+                            tmstp, err := time.Parse(time.RFC3339, value.String())
+                            if err != nil {
+                                        return nil, fmt.Errorf("invalid timestamp format")
                             }
-                            return time.Unix(value.Int(), 0), nil                 // Here we return if the timestamp if of Int type (UNIX TS): 1739145600
+                            return tmstp, nil
+                    }
                     default : 
                             return value.Value(), nil
               } 
